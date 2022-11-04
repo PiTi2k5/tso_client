@@ -52,6 +52,8 @@ const baseTranslation = {
 		'prod_finish': 'Finish time',
 		'prod_timed': 'Timed production',
 		'prod_queuesize': 'Queue size',
+		'prod_welcome': 'Welcome to production manager!',
+		'prod_welcome_block': '<p>You can record buildings and then mass stop or start them. Press "Start recording" button and select your buildings. After that come back and press "Stop recording". You will see list of buildings with current status. Save it as a template and next time just load template and press Submit.</p>'
 	},
 	'ru-ru': {
 		'btn_submit': 'Отправить',
@@ -104,6 +106,8 @@ const baseTranslation = {
 		'prod_finish': 'Время завершения',
 		'prod_timed': 'Очереди производства',
 		'prod_queuesize': 'Размер очереди',
+		'prod_welcome': 'Добро пожаловать в менеджер производства!',
+		'prod_welcome_block': '<p>Вы можете записать нужные здания, чтобы потом массово запускать либо останавливать их. Нажмите "Начать запись" и выделяйте свои здания кликая на них. После окончания вернитесь сюда и нажмите кнопку "Остановить запись". Вы увидите список зданий и их статус. Сохраните его как шаблон. В следующий раз загрузите шаблон, проверьте список и нажмите "Отправить".</p>'
 	},
 	'de-de': {
 		'btn_submit': 'Senden',
@@ -151,7 +155,13 @@ const baseTranslation = {
 		'auc_bid_for': "Gebotsbetrag:",
 		'auc_you_have': "Sie haben:",
 		'auc_your_max': "Sie sind Höchstbietender, es kann kein Gebot gemacht werden",
-		'auc_do_bid': 'Gebot machen'
+		'auc_do_bid': 'Gebot machen',
+		'prod_estimate': 'Geschätzte Zeit',
+		'prod_finish': 'Endzeit',
+		'prod_timed': 'Zeitgesteuerte Produktion',
+		'prod_queuesize': 'Warteschlangengröße',
+		'prod_welcome': 'Herzlich Willkommen im Manager für Produktionen!',
+		'prod_welcome_block': '<p>Sie können Gebäude aufnehmen und dann die Produktionen im Manager stoppen oder starten. Klicken Sie "Aufnahme starten" an und klicken dann Ihre Gebäuden an die in der Liste erscheinen sollen. Danach klicken Sie wieder im Produktionsmanager auf "Aufnahme stoppen" an. Es wird dann eine Liste der angeklickten Gebäude angezeigt. Speichern sie diese als Vorlage. Nächstes Mal können Sie die Vorlage laden, Sie sehen den "Status" und können mit dem Schieberegler die Gebäudeproduktion steuern, abschließend auf "Senden" klicken.</p>'
 	},
 	'fr-fr': {
 		'btn_close': 'Fermer',
@@ -200,7 +210,11 @@ const baseTranslation = {
 		'auc_bid_for': "Enchérissez pour:",
 		'auc_you_have': "Vous avez:",
 		'auc_your_max': "Votre Enchère est la plus haute, donc vous ne pouvez pas Surenchérir",
-		'auc_do_bid': 'Enchèrir'
+		'auc_do_bid': 'Enchèrir',
+		'prod_estimate': 'Temps Estimé',
+		'prod_finish': 'Date de Fin',
+		'prod_timed': 'Production Chronométrée',
+		'prod_queuesize': 'Taille de la file'
 	},
 	'es-es': {
 		'btn_submit': 'Enviar',
@@ -248,7 +262,11 @@ const baseTranslation = {
 		'auc_bid_for': "Puja por:",
 		'auc_you_have': "Tienes:",
 		'auc_your_max': "Eres el mejor postor, no puedes pujar de nuevo",
-		'auc_do_bid': 'Pujar'
+		'auc_do_bid': 'Pujar',
+		'prod_estimate': 'Tiempo estimado',
+		'prod_finish': 'Data de fin',
+		'prod_timed': 'Crono Producción',
+		'prod_queuesize': 'Tamaño en cola'
 	},
 	"pl-pl": {
 		"btn_submit":"Wyślij",
