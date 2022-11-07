@@ -66,6 +66,7 @@ const _exudspecDutyLang = {
 var _exudSpecDutyHideGuest = false;
 var _exudSpecDutyType = 1; // 1 = explorer 2 = geologist 3 = generals
 var _exudDutySPECIALIST_TYPE = swmmo.getDefinitionByName("Enums::SPECIALIST_TYPE");
+var _exudDutySPECIALIST_TASK_TYPE = swmmo.getDefinitionByName("Enums::SPECIALIST_TASK_TYPES");
 var _exudBtnToSpecType = { 'dutyExplorersBtn': 1,'dutyGeologistBtn': 2,'dutyGeneralsBtn': 3 };
 var idL = loca.getSelectedLanguage();			
 addToolsMenuItem(_exudspecDutyGetLabel("menuItemName"), specDutyTime);
@@ -143,17 +144,22 @@ function dutyGetData() {
 		if ((PlayerID == item.getPlayerID()) || !_exudSpecDutyHideGuest)
 			{
 				var pname = "";
-				if (PlayerID == i_pid)
+					if (PlayerID == i_pid)
+						++mySpecTot;
+					
+				if (swmmo.application.mGameInterface.mCurrentPlayer.mIsAdventureZone)
 				{
-					++mySpecTot;
-					pname = _exudspecDutyGetLabel("YOU");
-				}
+					if (PlayerID == i_pid)
 				
-				try{
-					if(_exudSpecDutyType == 3 && i_pid > 0 && PlayerID != i_pid) {
-						pname = swmmo.application.mGameInterface.GetPlayerName_string(i_pid);
-					}
-				} catch (e) {} 
+						pname = _exudspecDutyGetLabel("YOU");
+
+					
+					try{
+						if(_exudSpecDutyType == 3 && i_pid > 0 && PlayerID != i_pid) {
+							pname = swmmo.application.mGameInterface.GetPlayerName_string(i_pid);
+						}
+					} catch (e) {} 
+				}			
 				
 				if (pname != null && pname != "")
 					ItemName += ' ({0})'.format(pname);
@@ -161,7 +167,7 @@ function dutyGetData() {
 				if(_exudSpecDutyType != 3) {
 					task = loca.GetText("LAB", item.GetTask().getTaskDefinition().mainTask.taskName_string+item.GetTask().getTaskDefinition().taskType_string);
 				} else {
-					task = loca.GetText("LAB", "SpecialistTask8");
+					task =loca.GetText("LAB","SpecialistTask"+_exudDutySPECIALIST_TASK_TYPE.toString(item.GetTask().CreateTaskVOFromSpecialistTask().type));
 				}
 				listSpec.push( [ ItemName , item.GetTask().GetRemainingTime(), getImageTag(item.getIconID(), '10%'), task  ]  );
 				isThereAnySpec = true;
@@ -173,7 +179,9 @@ function dutyGetData() {
 							+ ' ' 
 							+ _exudspecDutyGetLabel("menuTitle") 
 							+ ( mySpecTot > 0 ? " (" + mySpecTot + ")" : "")
-							+ (  swmmo.application.mGameInterface.mCurrentPlayer.mIsAdventureZone ?	' : ' + loca.GetText("ADN", swmmo.application.mGameInterface.getAdventureName()) : '' )	
+							+ (  swmmo.application.mGameInterface.mCurrentPlayer.mIsAdventureZone ?	' : ' + loca.GetText("ADN", swmmo.application.mGameInterface.getAdventureName()) : 
+								(swmmo.application.mGameInterface.isOnHomzone() ? '' : " (" + swmmo.application.mGameInterface.mHomePlayer.GetPlayerName_string() + " - " + swmmo.application.mGameInterface.mHomePlayer.GetPlayerLevel() + ")")
+							  )
 						);	
 	
 	if(!isThereAnySpec)
