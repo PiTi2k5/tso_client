@@ -1,25 +1,49 @@
 // ========== GUILD COMMAND
+var _exudDepositVieweLang = {
+	'en-uk': {
+		'TimeDepEnd': 'Time Dep/Cycle',
+		'BuffEnd': 'Buff End',
+		'Buff': 'Buff',
+		"Note": "*The exhaustion time is indicative, and may vary depending on the current cycle status and any buildings that can be added after having exhausted neighboring deposits.Sometimes the data may not be up to date. Run the refresh command first. (F2)"
+		},
+	"pt-br" : {
+		'TimeDepEnd': 'Esgota em/Ciclo',
+		'BuffEnd': 'Fim Cat.',
+		'Buff': 'Catalizador',
+		"Note" :  "*O tempo de esgotamento é indicativo, pode variar dependendo do estado do ciclo atual e de eventuais predios que podem intervir apos ter esgotado os depositos vizinhos.As vezes os dados podem nao estar atualizados. Execute o comando de atualizar antes. (F2)"
+		},
+	'fr-fr': {
+		'TimeDepEnd': 'Temps Dép/Cycle',
+		'BuffEnd': 'Fortifiant Terminé',
+		'Buff': 'Fortifiant',
+		"Note": "*La date de fin est indicative, et peut varier en fonction du cycle actuel et des buildings qui peuvent être rajoutés après avoir épuisé le(s) dépots voisins. Parfois les informations ne sont pas à jour. Faites une Mise à Jour (F2)."
+		}
+};
 
-addToolsMenuItem(loca.GetText("LAB", "Trait_LovelyGeologist"), _exudDepositViewerMenuHandler);
-
-const _exudDepositViewerAssetsNames = [ "Corn",  "Fish",	"IronOre",	"Coal",	"Stone",
-					"Marble", "Granite", "Meat", "BronzeOre", "GoldOre", "TitaniumOre", "Salpeter", "Water" ,
+const _exudDepositViewerAssetsNames = [ "Corn", "Fish", "IronOre", "Coal", "Stone", "Marble", "Granite",
+					"Meat", "BronzeOre", "GoldOre", "TitaniumOre", "Salpeter", "Water" ,
 					"HalloweenResource"
 					];
 
+extendBaseLang(_exudDepositVieweLang, 'exudDepositVieweLang');
+addToolsMenuItem(loca.GetText("LAB", "Trait_LovelyGeologist"), _exudDepositViewerMenuHandler);
 var _exudDepositViewerModalInitialized = false;
 
 function _exudDepositViewerMenuHandler(event) {
-	//_debugClassesDebugMessage("_exudDepositViewerMenuHandler");
-	//_debugClassesDebugMessage("_exudDepositViewerModalVersion : " + _exudDepositViewerModalVersion);
-	//_debugClassesDebugMessage("_exudDepositViewerModalInitialized : " + _exudDepositViewerModalInitialized);
 	$("div[role='dialog']:not(#DepositViewerModal):visible").modal("hide");
 	if(!_exudDepositViewerModalInitialized)
 		$('#DepositViewerModal').remove();
 try{
 	if($('#DepositViewerModal .modal-header .container-fluid').length == 0){
+		$('#udDepositViewerStyle').remove();
+	
+		if($('#udDepositViewerStyle').length == 0)
+		{
+			$("head").append($("<style>", { 'id': 'udDepositViewerStyle' }).text('div .row:hover {background-color: #A65329;}'));
+		}
+		
+		
 		const selectOptions = [ "---", "DepositDepleted"]; // remove All because too heavy
-		//_debugClassesDebugMessage("_exudDepositViewerMenuHandler creating");
 
 		createModalWindow('DepositViewerModal', 'Deposit Viewer');
 		select = $('<select>', { id: 'udDepositViewerType' });	
@@ -33,10 +57,13 @@ try{
 			+ '</span>  <span>'+loca.GetText("SHG", "Deposits")
 			+' : <span id="dvDepositViewerTotal"></span></span></div><br/>' 
 			+createTableRow([
-				[8, loca.GetText("LAB", "Name")],
-				[2, loca.GetText("LAB", "amount")],
-				[2, loca.GetText("LAB", "Visit")]
+				[4, loca.GetText("LAB", "Name")],
+				[2, getText('TimeDepEnd', 'exudDepositVieweLang')],
+				[2, getText('BuffEnd', 'exudDepositVieweLang') ],
+				[3, loca.GetText("LAB", "amount") + "/" + getText('Buff', 'exudDepositVieweLang')],
+				[1, loca.GetText("LAB", "Visit")]
 			], true) 
+			+ '<span style="font-size:12px">'  + getText('Note', 'exudDepositVieweLang') + '</span>'
 			+ '</div>'
 			);	
 				
@@ -60,8 +87,6 @@ try{
 	}
 	else
 		_exudDepositViewerGetData();
-		//_debugClassesDebugMessage("_exudDepositViewerMenuHandler exiting");
-
 }
 catch (edep) {}
 	
@@ -76,12 +101,13 @@ function _exudDepositViewerMakeModal() {
 
 var _exudDepositViewerGetingData = false;
 function _exudDepositViewerGetData() {
-	//_debugClassesDebugMessage("_exudDepositViewer get data");
 
-var OptionSelected = $('#udDepositViewerType option:selected').val();
+	var OptionSelected = $('#udDepositViewerType option:selected').val();
 	if (_exudDepositViewerGetingData) return;
 
 try{
+	var gEconomics = swmmo.getDefinitionByName("ServerState::gEconomics");
+
 	_exudDepositViewerGetingData = true;
 	$('#dvDepositViewerResult').html("");
 	if (OptionSelected == "---") 
@@ -105,33 +131,30 @@ try{
 			});
 	}
 
+	var DepositsData = new Array();
 	if (OptionSelected != "DepositDepleted")
+	{
 		Deposits.forEach(function(item) {
 			try {			
-				if(item == null ||  (OptionSelected != "All" && item.GetName_string() != OptionSelected)) { return; }
+				var BuildingsData = new Array();
+				if (item == null ||  (OptionSelected != "All" && item.GetName_string() != OptionSelected)) { return; }
 				var gid1 = item.GetGrid();
-				IconMap = getImageTag("accuracy.png", '24px', '24px').replace('<img','<img id="exudDVPOS_'+ gid1+'"').replace('style="', 'style="cursor: pointer;')
+				var IconMapDep = getImageTag("accuracy.png", '24px', '24px').replace('<img','<img id="exudDVPOS_'+ gid1+'"').replace('style="', 'style="cursor: pointer;')
+				var TotRes = item.GetAmount();
 				
-				$('#dvDepositViewerResult').append(
-					createTableRow([
-						[8, loca.GetText("RES", item.GetName_string())],
-						[2, item.GetAmount()],
-						[2, IconMap]
-					], false) 
-				);				
-				document.getElementById("exudDVPOS_" + gid1).addEventListener("click",function() {_exudDepositViewerGoTo(gid1);});
 				var BldDep = _exudDepositViewerFindMyBuildings(gid1);
-				//_debugClassesDebugMessage("Pushed : " + BldDep.length);
+				var ResourcesRemovedEverySecond = 0;
 				BldDep.forEach(function (bld) {
 					try {
+						var IconMapBld = "";
 						var bldGid = bld.GetGrid();
-						IconMap = "";
 						if (bldGid > 0 && bldGid != gid1)
-							IconMap = getImageTag("accuracy.png", '24px', '24px').replace('<img','<img id="exudDVPOS_'+ bldGid+'"').replace('style="', 'style="cursor: pointer;')
+							IconMapBld = getImageTag("accuracy.png", '24px', '24px').replace('<img','<img id="exudDVPOS_'+ bldGid+'"').replace('style="', 'style="cursor: pointer;')
 						timeEnd = 0;
 						timeStr = "";
 						buffName = "";
 						buff = bld.productionBuff;
+						isWorking = bld.IsProductionActive();
 						if (buff != null)
 						{
 							app = buff.GetApplicanceMode();	
@@ -139,41 +162,101 @@ try{
 							{									
 								timeEnd =  new window.runtime.Date(Date.now() + (buff.GetStartTime() + buff.GetBuffDefinition().getDuration(app)) - swmmo.application.mGameInterface.GetClientTime());
 								buffName = loca.GetText("RES", buff.GetBuffDefinition().GetName_string());
-							}
-							
+							}							
 						}
 						
 						if (timeEnd > 0)
 						{
 							var dtfex = new window.runtime.flash.globalization.DateTimeFormatter("en-US"); 
-							dtfex.setDateTimePattern("MM-dd-yyyy HH:mm"); 
-							timeStr = dtfex.format(new window.runtime.Date(timeEnd));
+							if (gameLang.indexOf("en-") > 0)
+								dtfex.setDateTimePattern("MM-dd-yyyy HH:mm"); 
+							else
+								dtfex.setDateTimePattern("dd-MM HH:mm"); 
+							
+							timeStr = dtfex.format(new window.runtime.Date(timeEnd)); // time ticks of game is different
 							
 						}
+						var rcd = gEconomics.GetResourcesCreationDefinitionForBuilding(bld.GetBuildingName_string());
+
+						var rcd_pck = 0; // infinite mines remove 0
+						if (rcd != null)
+							rcd_pck = rcd.amountRemoved; // resources removed base value
+						var Seconds = bld.CalculateWays()/1000;
+						var TotRemoved = bld.GetResourceInputFactor() * rcd_pck; // resources removed base * level * buffs
 						
-						$('#dvDepositViewerResult').append(
-							createTableRow([
-								[1, ""],
-								[3, loca.GetText("BUI", bld.GetBuildingName_string())],
-								[1, (bld.mBuffs_vector.length > 0 ? "Buffed" : "") ],
-								[2, timeStr],
-								[3, buffName],
-								[2, IconMap]
-							], false) 
-						);
-						//_debugClassesDebugMessage(loca.GetText("BUI", bld.GetBuildingName_string()) + ": bldGid=" + bldGid);
-						if (IconMap != "")
-							document.getElementById("exudDVPOS_" + bldGid).addEventListener("click",function() {_exudDepositViewerGoTo(bldGid);});
+						if (isWorking)
+							ResourcesRemovedEverySecond += (TotRemoved == 0 ? 0 : TotRemoved / Seconds);
+						BuildingsData.push({
+								"Name" : loca.GetText("BUI", bld.GetBuildingName_string()),
+								"Buffed" : (bld.mBuffs_vector.length > 0),
+								"BuffTime": timeStr,
+								"BuffName": buffName,
+								"OverallTime" : Seconds, // total seconds
+								"IconMap":  IconMapBld,
+								"Working": isWorking,
+								"GridPos" : bldGid,
+								"AmountRemoved" : TotRemoved 
+						});
+
 					}
-					catch (ex) {}
+					catch (ex) {
+						//alert(ex.message);
+					}
+				});
+				BuildingsData.sort(_exudDepositViewerBuildingsDataSort);
+				DepositsData.push({
+					"Name" : loca.GetText("RES", item.GetName_string()),
+					"TotRes" : TotRes,
+					"IconMap" : IconMapDep,
+					"GridPos" : gid1,
+					"BData" : BuildingsData,
+					"SecondsToDeplete" : (ResourcesRemovedEverySecond > 0 && TotRes > 0 ? (TotRes / ResourcesRemovedEverySecond) : 0)
 				});
 
 				++tot;
 			}
 			catch (e) {
-			}			
-		});	
+		}			
+		});		
 		
+		DepositsData.sort(_exudDepositViewerDepositDataSort);
+		// End data get start rendering
+		DepositsData.forEach(function(item) {
+			try{
+			
+				$('#dvDepositViewerResult').append('<div style="color: yellow;">' +
+					createTableRow([
+						[4, item.Name],
+						[4, _exudDepositViewerSetTimeStr(item.SecondsToDeplete, 2)],
+						[3, item.TotRes],
+						[1, item.IconMap]
+					], false) 
+					+'</div>'
+				);		
+				if (item.IconMap != "")			
+					document.getElementById("exudDVPOS_" + item.GridPos).addEventListener("click",function() {_exudDepositViewerGoTo(item.GridPos);});
+
+				item.BData.forEach(function(bld) {
+					$('#dvDepositViewerResult').append(
+						createTableRow([
+							[4, $('<span>', {'style' : 'white-space: nowrap;overflow: hidden;text-overflow: ellipsis;' + (bld.Working?'':'color: red;')}).html('&nbsp;&rarr;' + bld.Name).prop('outerHTML')],
+							[2, _exudDepositViewerSetTimeStr(bld.OverallTime, 1) + " (" + bld.AmountRemoved + ")"],
+							[2, bld.BuffTime],
+							[3, $('<span>', {'style' : 'white-space: nowrap;overflow: hidden;text-overflow: ellipsis;'}).html(bld.BuffName).prop('outerHTML')],
+							[1, bld.IconMap]
+						], false) 
+						
+					);
+					if (bld.IconMap != "")
+						document.getElementById("exudDVPOS_" + bld.GridPos).addEventListener("click",function() {_exudDepositViewerGoTo(bld.GridPos);});
+				}); // end buildingdata foreach
+			}
+			catch (eren) {
+			//	alert("eren: " + eren.message);
+			}
+		}); // end depositdata foreach		
+	}
+	
 	var Depleted = new Array();
 	swmmo.application.mGameInterface.mCurrentPlayerZone.mStreetDataMap.mBuildingContainer.forEach(function(item) {
 		try {			
@@ -191,15 +274,17 @@ try{
 	Depleted.forEach(function(i) {
 		try {
 			var gid1 = i.Item.GetGrid();
-			IconMap = getImageTag("accuracy.png", '24px', '24px').replace('<img','<img id="exudDVPOS_'+ gid1+'"').replace('style="', 'style="cursor: pointer;')
+			var IconMap = "";
+			if (gid1 > 0)
+				IconMap = getImageTag("accuracy.png", '24px', '24px').replace('<img','<img id="exudDVPOS_'+ gid1+'"').replace('style="', 'style="cursor: pointer;')
 			$('#dvDepositViewerResult').append(
 				createTableRow([
-						[8,  loca.GetText("BUI", i.Item.GetBuildingName_string()) + (i.Resource == "" ? "" : " (" + i.Resource + ")" )],
-						[2, ""],
-						[2, IconMap]
+						[11,  loca.GetText("BUI", i.Item.GetBuildingName_string()) + (i.Resource == "" ? "" : " (" + i.Resource + ")" )],
+						[1, IconMap]
 					], false) 
 			);
-			document.getElementById("exudDVPOS_" + gid1).addEventListener("click",function() {_exudDepositViewerGoTo(gid1);});
+			if (IconMap != "")
+				document.getElementById("exudDVPOS_" + gid1).addEventListener("click",function() {_exudDepositViewerGoTo(gid1);});
 			++tot;
 		}
 		catch (e) {
@@ -214,6 +299,48 @@ catch (egd) {
 }
 _exudDepositViewerGetingData = false;	
 }
+function _exudDepositViewerDepositDataSort(a, b)
+{
+	try{
+		if (a.SecondsToDeplete < b.SecondsToDeplete) return -1;
+		if (a.SecondsToDeplete > b.SecondsToDeplete) return 1;
+	}
+	catch (e) {
+	}
+	return 0;
+}
+function _exudDepositViewerBuildingsDataSort(a, b)
+{
+	try{
+		if (a.OverallTime < b.OverallTime) return -1;
+		if (a.OverallTime > b.OverallTime) return 1;
+	}
+	catch (e) {
+	}
+	return 0;
+}
+// type : 1 = 00:00:00   2 = MM-dd-yyyy 00:00:00
+function _exudDepositViewerSetTimeStr(seconds, type) 
+{
+	try {
+		if (seconds < 1) return "";
+		switch(type)
+		{
+			case 1:
+				return result = new Date(seconds * 1000).toISOString().slice(11, 19);
+			case 2:
+				var d =  result = new Date(new Date(Date.now()).getTime() + seconds*1000);
+				if (gameLang.indexOf("en-") > 0)
+					return (d.getMonth()+1) + "-" + d.getDate() + " " + d.toLocaleTimeString();
+				else
+					return d.getDate() + "-" + (d.getMonth()+1) + " " + d.toLocaleTimeString();
+		}
+	}
+	catch(e){
+	}
+	return "";
+}
+
 
 function _exudDepositViewerFindMyBuildings(gidPos)
 {
@@ -223,7 +350,6 @@ function _exudDepositViewerFindMyBuildings(gidPos)
 			if (item.GetResourceCreation().GetDepositBuildingGridPos() > 0)
 				if (item.GetResourceCreation().GetDepositBuildingGridPos() == gidPos)
 				{
-					//_debugClassesDebugMessage("Push : " + item.GetBuildingName_string() + " = " + gidPos);
 					BuildingsDep.push(item);
 				}
 		}
@@ -251,12 +377,9 @@ function _exudDepositViewerFindOriginalResource(building_name)
 function _exudDepositViewerGoTo(g)
 {
 	try{
-	$('#DepositViewerModal').modal('hide');
-	swmmo.application.mGameInterface.mCurrentPlayerZone.ScrollToGrid(g);
-	//_debugClassesDebugMessage("_exudDepositViewer go and hide");
-
+		$('#DepositViewerModal').modal('hide');
+		swmmo.application.mGameInterface.mCurrentPlayerZone.ScrollToGrid(g);
 	}
 	catch (e) {
-		alert(e.message);
 	}
 }
