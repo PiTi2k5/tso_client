@@ -3,8 +3,8 @@ var geoDropSpec = [
 	{ 'val': '0', 'text': loca.GetText("LAB", "Cancel"), 'req': 0 },
 	{ 'val': '0,0', 'text': loca.GetText("TOT", "FindDepositStone"), 'req': 0 },
 	{ 'val': '0,1', 'text': loca.GetText("TOT", "FindDepositBronzeOre"), 'req': 9 },
-	{ 'val': '0,2', 'text': loca.GetText("TOT", "FindDepositMarble"), 'req': 17 },
-	{ 'val': '0,3', 'text': loca.GetText("TOT", "FindDepositIronOre"), 'req': 18 },
+	{ 'val': '0,2', 'text': loca.GetText("TOT", "FindDepositMarble"), 'req': 19 },
+	{ 'val': '0,3', 'text': loca.GetText("TOT", "FindDepositIronOre"), 'req': 20 },
 	{ 'val': '0,4', 'text': loca.GetText("TOT", "FindDepositGoldOre"), 'req': 23 },
 	{ 'val': '0,5', 'text': loca.GetText("TOT", "FindDepositCoal"), 'req': 24 },
 	{ 'val': '0,6', 'text': loca.GetText("TOT", "FindDepositGranite"), 'req': 60 },
@@ -13,55 +13,61 @@ var geoDropSpec = [
 ];
 var explorerDropSpec = [
   { 'label': loca.GetText("LAB", "FindTreasure"), 'data': [
-	  { 'val': '1,0', 'text': loca.GetText("LAB", "FindTreasureShort"), 'req': [0,0,0] },
-	  { 'val': '1,1', 'text': loca.GetText("LAB", "FindTreasureMedium"), 'req': [0,0,0] },
-	  { 'val': '1,2', 'text': loca.GetText("LAB", "FindTreasureLong"), 'req': [0,0,0] },
-	  { 'val': '1,3', 'text': loca.GetText("LAB", "FindTreasureEvenLonger"), 'req': [0,0,0] },
+	  { 'val': '1,0', 'text': loca.GetText("LAB", "FindTreasureShort"), 'req': [0,0,8] },
+	  { 'val': '1,1', 'text': loca.GetText("LAB", "FindTreasureMedium"), 'req': [0,0,20] },
+	  { 'val': '1,2', 'text': loca.GetText("LAB", "FindTreasureLong"), 'req': [0,0,32] },
+	  { 'val': '1,3', 'text': loca.GetText("LAB", "FindTreasureEvenLonger"), 'req': [0,0,40] },
  	  { 'val': '1,6', 'text': loca.GetText("LAB", "FindTreasureLongest"), 'req': [0,0,54] },
 	  { 'val': '1,4', 'text': loca.GetText("LAB", "FindTreasureTravellingErudite"), 'req': [1,0,0] },
 	  { 'val': '1,5', 'text': loca.GetText("LAB", "FindTreasureBeanACollada"), 'req': [0,1,0] }
   ]},
   { 'label': loca.GetText("LAB", "SpecialistTaskFindAdventureZone"), 'data': [
-	  { 'val': '2,0', 'text': loca.GetText("LAB", "FindAdventureZoneShort"), 'req': [0,0,0] },
-	  { 'val': '2,1', 'text': loca.GetText("LAB", "FindAdventureZoneMedium"), 'req': [0,0,0] },
-	  { 'val': '2,2', 'text': loca.GetText("LAB", "FindAdventureZoneLong"), 'req': [0,0,0] },
-	  { 'val': '2,3', 'text': loca.GetText("LAB", "FindAdventureZoneVeryLong"), 'req': [0,0,0] }
+	  { 'val': '2,0', 'text': loca.GetText("LAB", "FindAdventureZoneShort"), 'req': [0,0,26] },
+	  { 'val': '2,1', 'text': loca.GetText("LAB", "FindAdventureZoneMedium"), 'req': [0,0,36] },
+	  { 'val': '2,2', 'text': loca.GetText("LAB", "FindAdventureZoneLong"), 'req': [0,0,42] },
+	  { 'val': '2,3', 'text': loca.GetText("LAB", "FindAdventureZoneVeryLong"), 'req': [0,0,56] }
   ]}
 ];
 
 function specSharedHandler(type)
 {
+	const isExplorer = type === 1,
+		isGeologist = type === 2;
 	$( "div[role='dialog']:not(#specModal):visible").modal("hide");
 	createModalWindow('specModal', '');
-	$("#specModal .modal-title").html("{0} {1}".format(getImageTag(type == 2 ? 'icon_geologist.png' : 'icon_explorer.png'), loca.GetText("SPE", type == 2 ? "Geologist" : "Explorer")));
+	$("#specModal .modal-title").html("{0} {1}".format(
+		getImageTag(isGeologist ? 'icon_geologist.png' : 'icon_explorer.png'),
+		loca.GetText("SPE", isGeologist ? "Geologist" : "Explorer"))
+	);
 	if(game.gi.isOnHomzone() == false) {
 		game.showAlert(getText('not_home'));
 		return;
 	}
 	$('#specModal .specSaveTemplate').length == 0 && createSpecWindow();
-	specTemplates.setModule(type == 1 ? 'expl' : 'geo');
+	specTemplates.setModule(isExplorer ? 'expl' : 'geo');
 	const playerLevel = game.player.GetPlayerLevel();
-    var out = '<div class="container-fluid">', isThereAnySpec = false;
+    var out = '<div class="container-fluid">', isThereAnySpec = false, specialistsUniqueId;
 	game.getSpecialists().sort(0).forEach(function(item){
 		if (item.GetTask() != null || item.GetBaseType() != type) { return; }
+		specialistsUniqueId = item.GetUniqueID();
 		isThereAnySpec = true;
-		if(type == 1) {
+		if(isExplorer) {
 			var skills = [];
 			item.getSkillTree().getItems_vector().forEach(function(skill){
-				skills[skill.getId()] = skill.getLevel() > 0 ? true : false;
+				skills[skill.getId()] = skill.getLevel() > 0;
 			});
 		}
 		out += createTableRow([
 			[4, getImageTag(item.getIconID(), '8%') + item.getName(false), 'name'],
 			[3, '&nbsp;'],
-			[5, type == 1 ? createExplorerDropdown(item.GetUniqueID(), skills[39], skills[40], false, true) : createGeologistDropdown(item.GetUniqueID(), playerLevel, false, true)]
+			[5, isExplorer ? createExplorerDropdown(specialistsUniqueId, skills[39], skills[40], false, true) : createGeologistDropdown(specialistsUniqueId, playerLevel, false, true)]
 		]);
 	});
 	if(!isThereAnySpec) {
-		game.showAlert(getText(type == 0 ? 'no_free_geo' : 'no_free_expl'));
+		game.showAlert(getText(isGeologist ? 'no_free_geo' : 'no_free_expl'));
 		return;
 	}
-	$("#specModal .massSend").html(type == 2 ? createGeologistDropdown(1, 1, true) : createExplorerDropdown(null, true, true, true));
+	$("#specModal .massSend").html(isGeologist ? createGeologistDropdown(1, 1, true) : createExplorerDropdown(null, true, true, true));
 	$("#specModalData").html(out + '</div>');
 	$('#specModalData select').each(function(i, select){
 		updateSpecTimeRow(select, $(select).val(), $(select).val());

@@ -1,17 +1,8 @@
 // use addMenuItem from main script
 addToolsMenuItem("Show my loot", smlMenuHandler);
 var smlRewards = [];
-setTimeout(function() {
-	try
-	{
-		var smlTracker = game.getTracker('sml', smlApliedHandler);
-		game.player.addPropertyObserver("lootedResource", smlTracker);
-		game.chatMessage("PropertyObserver registered", 'sml');
-	} catch(e) {
-		game.chatMessage("PropertyObserver Error " + e, 'sml');
-	}
-}, 3000);
-
+var smlTracker = game.getTracker('sml', smlApliedHandler);
+game.gi.channels.ZONE.addPropertyObserver("lootedResource", smlTracker);
 
 function smlMenuHandler(event)
 {
