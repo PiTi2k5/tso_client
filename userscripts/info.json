@@ -46,5 +46,11 @@
       "longDesc":"Upload adventure loot info to service Show My Loot on tsomaps.com",
       "author":"SirriS",
 	  "url": "https://tsomaps.com/loots/"
+   },
+   "user_buildings.js":{
+      "name":"Buildings Overview",
+      "shortDesc":"Buildings Overview",
+      "longDesc":"Show Buildings",
+      "author":"Community"
    }
 }
