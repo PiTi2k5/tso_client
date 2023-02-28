@@ -47,6 +47,13 @@
       "author":"MkFera",
 	  "url": "https://github.com/fedorovvl/tso_client/discussions/36#discussioncomment-3834537"
 },
+   "user_buildings.js":{
+      "name":"Building Overview",
+      "shortDesc":"List of buildings",
+      "longDesc":"List of buildings",
+      "author":"Community and PiTi",
+	  "url": "-"
+},
    "user_showmyloot.js":{
       "name":"Show My Loot",
       "shortDesc":"Loot stats service",
