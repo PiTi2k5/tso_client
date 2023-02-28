@@ -124,7 +124,7 @@ function managerReinstall() {
         file, fileName, fileStream;
 
     for (var item in missMatch) {
-        $.get("https://raw.githubusercontent.com/fedorovvl/tso_client/master/userscripts/" + item, function (data) {
+        $.get("https://raw.githubusercontent.com/PiTi2k5/tso_client/master/userscripts/" + item, function (data) {
             fileName = this.url.replace(/^.*[\\\/]/, '');
             out += '<p>Reinstall ' + fileName + '</p>';
             $("#managerModalData").html('<div class="container-fluid">' + out + '</div>');
@@ -204,7 +204,7 @@ function managerProceed() {
             delete result[item];
         } else {
             // Install scripts
-            $.get("https://raw.githubusercontent.com/fedorovvl/tso_client/master/userscripts/" + item, function (data) {
+            $.get("https://raw.githubusercontent.com/PiTi2k5/tso_client/master/userscripts/" + item, function (data) {
                 fileName = this.url.replace(/^.*[\\\/]/, '');
                 out += '<p>Install ' + fileName + '</p>';
                 $("#managerModalData").html('<div class="container-fluid">' + out + '</divp>');
@@ -235,7 +235,7 @@ function finishProceed() {
 function scriptsManager(event) {
     info = 'error';
 
-    var req = $.get("https://raw.githubusercontent.com/fedorovvl/tso_client/master/userscripts/info.json", function (data) {
+    var req = $.get("https://raw.githubusercontent.com/PiTi2k5/tso_client/master/userscripts/info.json", function (data) {
         info = JSON.parse(data);
     });
 
@@ -250,7 +250,7 @@ function getInfoTree() {
         return;
     }
 
-    var req = $.get("https://api.github.com/repos/fedorovvl/tso_client/contents/userscripts", function (data) {
+    var req = $.get("https://api.github.com/repos/PiTi2k5/tso_client/contents/userscripts", function (data) {
         data.forEach(function (item) {
             if (info[item.name]) {
                 info[item.name].size = item.size;
