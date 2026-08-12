@@ -162,7 +162,7 @@ namespace client
             AutoUpdater.InstalledVersion = new Version(appversion);
             AutoUpdater.ShowSkipButton = true;
             AutoUpdater.OpenDownloadPage = true;
-            AutoUpdater.Start("https://raw.githubusercontent.com/fedorovvl/tso_client/master/changelog.xml");
+            AutoUpdater.Start("https://raw.githubusercontent.com/piti2k5/tso_client/master/changelog.xml");
             Dispatcher.BeginInvoke(new ThreadStart(delegate { butt.IsEnabled = false; error.Text = Servers.getTrans("checking"); }));
             if (!Directory.Exists(ClientDirectory))
                 Directory.CreateDirectory(ClientDirectory);
