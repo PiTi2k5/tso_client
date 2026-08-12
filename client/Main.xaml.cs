@@ -247,7 +247,7 @@ namespace client
                 {
                     post = new PostSubmitter
                     {
-                        Url = "https://raw.githubusercontent.com/fedorovvl/tso_client/master/upstream.json",
+                        Url = "https://raw.githubusercontent.com/piti2k5/tso_client/master/upstream.json",
                         Type = PostSubmitter.PostTypeEnum.Get
                     };
                     string upstream_json = post.Post(ref _cookies).Trim();
@@ -264,7 +264,7 @@ namespace client
                 {
                     post = new PostSubmitter
                     {
-                        Url = "https://api.github.com/repos/fedorovvl/tso_client/contents/" + swf_filename,
+                        Url = "https://api.github.com/repos/piti2k5/tso_client/contents/" + swf_filename,
                         Type = PostSubmitter.PostTypeEnum.Get
                     };
                     string rchksum = post.Post(ref _cookies).Trim();
@@ -278,7 +278,7 @@ namespace client
                 if (needDownload)
                 {
                     Dispatcher.BeginInvoke(new ThreadStart(delegate { error.Text = Servers.getTrans("downloading"); }));
-                    byte[] client = DownloadFile("https://raw.githubusercontent.com/fedorovvl/tso_client/master/" + swf_filename);
+                    byte[] client = DownloadFile("https://raw.githubusercontent.com/piti2k5/tso_client/master/" + swf_filename);
                     File.WriteAllBytes(System.IO.Path.Combine(ClientDirectory, "client.swf"), client);
                 }
                 Dispatcher.BeginInvoke(new ThreadStart(delegate { error.Text = Servers.getTrans("letsplay"); butt.IsEnabled = true; }));
