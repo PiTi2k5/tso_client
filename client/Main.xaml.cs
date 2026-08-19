@@ -25,6 +25,7 @@ namespace client
     /// </summary>
     public partial class Main : Window, INotifyPropertyChanged
     {
+		public static string ShowGithubOwner;
         static byte[] additionalEntropy = { 2, 1, 8, 4, 2 };
         private clientSettings _settings = new clientSettings();
         public static bool debug = false;
@@ -196,6 +197,7 @@ namespace client
                 }
                 catch { }
             }
+			ShowGithubOwner = bestOwner;
             return bestOwner;
         }
 
@@ -250,7 +252,7 @@ namespace client
             }
             if ((cmd["skip"] != null || _settings.skipUpdate) && File.Exists(Path.Combine(ClientDirectory, "client.swf")))
             {
-                Dispatcher.BeginInvoke(new ThreadStart(delegate { error.Text = Servers.getTrans("letsplay"); butt.IsEnabled = true; }));
+                Dispatcher.BeginInvoke(new ThreadStart(delegate { error.Text = Servers.getTrans("letsplay") + " ("+ShowGithubOwner+")"; butt.IsEnabled = true; }));
                 if (cmd["autologin"] != null)
                 {
                     Dispatcher.BeginInvoke(new ThreadStart(delegate { butt_Click_1(null, null); }));
@@ -328,7 +330,7 @@ namespace client
                     byte[] client = DownloadFile(string.Format("https://raw.githubusercontent.com/{0}/tso_client/master/{1}", swfOwner, swf_filename));
                     File.WriteAllBytes(System.IO.Path.Combine(ClientDirectory, "client.swf"), client);
                 }
-                Dispatcher.BeginInvoke(new ThreadStart(delegate { error.Text = Servers.getTrans("letsplay"); butt.IsEnabled = true; }));
+                Dispatcher.BeginInvoke(new ThreadStart(delegate { error.Text = Servers.getTrans("letsplay") + " ("+ShowGithubOwner+")"; butt.IsEnabled = true; }));
                 if (cmd["autologin"] != null)
                 {
                     Dispatcher.BeginInvoke(new ThreadStart(delegate { butt_Click_1(null, null); }));
