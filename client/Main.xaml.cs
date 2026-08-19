@@ -163,7 +163,7 @@ namespace client
             }
         }
 
-        private static readonly string[] repoOwners = { "fedorovvl", "skelgaard" };
+        private static readonly string[] repoOwners = { "fedorovvl", "PiTi2k5", "skelgaard" };
 
         // Checks which of repoOwners last touched `path` (via the commits API)
         // and returns that owner, so a fork can carry newer fixes than upstream
