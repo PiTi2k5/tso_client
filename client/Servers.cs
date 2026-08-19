@@ -264,7 +264,7 @@ namespace client
                 { "checking", "Überprüfen des Clients" },
                 { "downloading", "Downloading.." },
 				{ "newswfconfirmtitle", "Update Verfügbar" },
-                { "newswfconfirm": "Deine lokale client.swf unterscheidet sich von der Version auf GitHub.\nDeine lokale Version ist vom: {0}\nDie GitHub-Version ist vom: {1}\nMöchtest du sie trotzdem herunterladen und ersetzen?" },
+                { "newswfconfirm", "Deine lokale client.swf unterscheidet sich von der Version auf GitHub.\nDeine lokale Version ist vom: {0}\nDie GitHub-Version ist vom: {1}\nMöchtest du sie trotzdem herunterladen und ersetzen?" },
                 { "emptypass", "Passwort ist leer." },
                 { "emptylogin", "Login ist leer." },
                 { "collect", "Hervorheben" },
