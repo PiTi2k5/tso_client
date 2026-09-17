@@ -11,7 +11,7 @@ The Settlers Online Windows portable client
 
 Check [WIKI](https://github.com/fedorovvl/tso_client/wiki) for detailed info.
 
-Support:
+Original Source: https://github.com/fedorovvl/tso_client
 
-Tinkoff https://www.tinkoff.ru/cf/7qUyCUSg6ju \
-BTC: bc1quulssa0eaqw8umd86sxxlnphtntm0y6vdreplm
+Support for PiTi (customizing & userscripts):
+BTC: 38NwTmLWJzCJFT4xeyWNasPs9mrYarNEsK
